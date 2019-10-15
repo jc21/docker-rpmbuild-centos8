@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Enable devtools if variable is set and not empty
+if [ -n "$DEVTOOLS" ]; then
+    source /opt/rh/devtoolset-8/enable
+fi
+
+/bin/build-spec $HOME/rpmbuild/SPECS/*.spec
