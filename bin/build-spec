@@ -112,8 +112,6 @@ fi
 sudo yum clean all
 sudo rm -rf /var/cache/yum
 
-cd ~/rpmbuild
-
 ## Disable yum mirror if specified
 if [ -n "$nomirror" ]; then
     echo -e "${YELLOW}❯ ${GREEN}Disabling Yum Fastest Mirror Plugin ...${RESET}"
@@ -145,8 +143,14 @@ fi
 echo -e "${YELLOW}❯ ${GREEN}Building ${WHITE}$@ ${GREEN}...${RESET}"
 cd ~/rpmbuild
 
-sudo yum-builddep -y $1
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+for spec in "$@"
+do
+    sudo yum-builddep -y ${spec}
+    rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
 
-rpmbuild --clean -ba $@
-rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+    spectool -g -R ${spec}
+    rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+
+    rpmbuild --clean -ba ${spec}
+    rc=$?; if [[ $rc != 0 ]]; then exit $rc; fi
+done
