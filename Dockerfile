@@ -27,6 +27,7 @@ RUN chown root:root /etc/sudoers.d/*
 
 # Remove requiretty from sudoers main file
 RUN sed -i '/Defaults    requiretty/c\#Defaults    requiretty' /etc/sudoers
+RUN sed -i '/Defaults.*XAUTHORITY"/a Defaults    env_keep += "HTTP_PROXY HTTPS_PROXY NO_PROXY http_proxy https_proxy no_proxy"' /etc/sudoers
 
 # Rpm User
 RUN adduser -G wheel rpmbuilder \
