@@ -6,7 +6,7 @@ LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 # Yum
 RUN yum -y install epel-release drpm dnf-plugins-core \
   && dnf config-manager --set-enabled PowerTools \
-  && yum localinstall -y https://yum.jc21.com/jc21-yum.rpm
+  && yum localinstall -y https://yum.jc21.com/jc21-yum.rpm \
   && yum -y update \
   && yum -y install scl-utils scl-utils-build which mock git wget curl kernel-devel rpmdevtools rpmlint rpm-build sudo gcc-c++ make automake autoconf yum-utils scl-utils scl-utils-build cmake libtool expect \
   && yum -y install aspell-devel bzip2-devel chrpath cyrus-sasl-devel enchant-devel fastlz-devel fontconfig-devel freetype-devel gettext-devel gmp-devel \
@@ -27,6 +27,7 @@ RUN chown root:root /etc/sudoers.d/*
 
 # Remove requiretty from sudoers main file
 RUN sed -i '/Defaults    requiretty/c\#Defaults    requiretty' /etc/sudoers
+RUN sed -i '/Defaults.*XAUTHORITY"/a Defaults    env_keep += "HTTP_PROXY HTTPS_PROXY NO_PROXY http_proxy https_proxy no_proxy"' /etc/sudoers
 
 # Rpm User
 RUN adduser -G wheel rpmbuilder \
