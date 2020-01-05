@@ -39,7 +39,7 @@ function show_help {
     echo ""
 }
 
-SHORT=p:u:br:hom
+SHORT=p:u:br:honm
 LONG=help
 
 # -temporarily store output to be able to check for errors
