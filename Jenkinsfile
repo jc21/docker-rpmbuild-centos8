@@ -8,7 +8,7 @@ pipeline {
   }
   environment {
     IMAGE      = "rpmbuild-centos8"
-    TAG        = "latest"
+    TAG        = "haskell"
     TEMP_IMAGE = "rpmbuild8_${TAG}_${BUILD_NUMBER}"
   }
   stages {
@@ -22,7 +22,6 @@ pipeline {
     stage('Publish') {
       steps {
         ansiColor('xterm') {
-
           // Dockerhub
           sh 'docker tag ${TEMP_IMAGE} docker.io/jc21/${IMAGE}:${TAG}'
           withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
@@ -39,9 +38,6 @@ pipeline {
   }
   post {
     success {
-      build job: 'Docker/docker-rpmbuild-centos8/golang', wait: false
-      build job: 'Docker/docker-rpmbuild-centos8/rust', wait: false
-
       juxtapose event: 'success'
       sh 'figlet "SUCCESS"'
     }
