@@ -2,34 +2,29 @@ pipeline {
   options {
     buildDiscarder(logRotator(numToKeepStr: '10'))
     disableConcurrentBuilds()
+    ansiColor('xterm')
   }
   agent {
     label 'docker'
   }
   environment {
-    IMAGE      = "rpmbuild-centos8"
+    IMAGE      = 'rpmbuild-centos8'
     TAG        = "latest"
     TEMP_IMAGE = "rpmbuild8_${TAG}_${BUILD_NUMBER}"
   }
   stages {
     stage('Build') {
       steps {
-        ansiColor('xterm') {
-          sh 'docker build --pull --no-cache --squash --compress -t ${TEMP_IMAGE} .'
-        }
+        sh 'docker build --pull --no-cache --squash --compress -t ${TEMP_IMAGE} .'
       }
     }
     stage('Publish') {
       steps {
-        ansiColor('xterm') {
-
-          // Dockerhub
-          sh 'docker tag ${TEMP_IMAGE} docker.io/jc21/${IMAGE}:${TAG}'
-          withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'dpass', usernameVariable: 'duser')]) {
-            sh "docker login -u '${duser}' -p '${dpass}'"
-            sh 'docker push docker.io/jc21/${IMAGE}:${TAG}'
-            sh 'docker rmi docker.io/jc21/${IMAGE}:${TAG}'
-          }
+        sh 'docker tag ${TEMP_IMAGE} docker.io/jc21/${IMAGE}:${TAG}'
+        withCredentials([usernamePassword(credentialsId: 'jc21-dockerhub', passwordVariable: 'DOCKER_USER', usernameVariable: 'DOCKER_PASS')]) {
+          sh 'docker login -u "${DOCKER_USER}"-p "${DOCKER_PASS}"'
+          sh 'docker push docker.io/jc21/${IMAGE}:${TAG}'
+          sh 'docker rmi docker.io/jc21/${IMAGE}:${TAG}'
         }
       }
     }
