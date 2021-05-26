@@ -4,6 +4,8 @@ LABEL maintainer="Jamie Curnow <jc@jc21.com>"
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+ENV LANG=en_AU.UTF-8
+
 # Yum
 RUN yum -y install epel-release drpm dnf-plugins-core \
 	&& dnf config-manager --set-enabled powertools \
@@ -28,7 +30,7 @@ RUN chown root:root /etc/sudoers.d/*
 
 # Remove requiretty from sudoers main file
 RUN sed -i '/Defaults    requiretty/c\#Defaults    requiretty' /etc/sudoers
-RUN sed -i '/Defaults.*XAUTHORITY"/a Defaults    env_keep += "HTTP_PROXY HTTPS_PROXY NO_PROXY http_proxy https_proxy no_proxy"' /etc/sudoers
+RUN sed -i '/Defaults.*XAUTHORITY"/a Defaults    env_keep += "LANG HTTP_PROXY HTTPS_PROXY NO_PROXY http_proxy https_proxy no_proxy"' /etc/sudoers
 
 # Rpm User
 RUN adduser -G wheel rpmbuilder \
