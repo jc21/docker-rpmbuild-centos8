@@ -6,6 +6,10 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV LANG=en_AU.UTF-8
 
+# Fix for appstream problems
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-* \
+	&& sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+
 # Yum
 RUN yum -y install epel-release drpm dnf-plugins-core \
 	&& dnf config-manager --set-enabled powertools \
