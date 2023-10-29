@@ -10,3 +10,4 @@ RUN /tmp/install-golang.sh \
 
 USER rpmbuilder
 
+ENV PATH="${PATH}:/usr/local/go/bin"
